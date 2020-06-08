@@ -1,12 +1,14 @@
 package com.example.ec.controller;
 
+import org.springframework.hateoas.ResourceSupport;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class RatingDto {
+
+public class RatingDto extends ResourceSupport {
 
     @Min(0)
     @Max(5)

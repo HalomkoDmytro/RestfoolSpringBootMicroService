@@ -5,4 +5,13 @@ public enum Difficulty {
     Medium,
     Difficult,
     Varies;
+
+    public static Difficulty findByLabel(String name) {
+        for (Difficulty dif : Difficulty.values()) {
+            if (dif.toString().equals(name)) {
+                return dif;
+            }
+        }
+        return null;
+    }
 }
