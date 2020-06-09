@@ -1,13 +1,12 @@
 package com.example.ec.controller;
 
-import com.example.ec.domain.TourRating;
 import com.example.ec.service.TourRatingService;
 import com.example.ec.web.RatingAssembler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -15,25 +14,42 @@ import java.util.NoSuchElementException;
 @RestController
 @RequestMapping(path = "/ratings")
 public class RatingController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RatingController.class);
     private TourRatingService tourRatingService;
+
     private RatingAssembler assembler;
 
     @Autowired
-    public RatingController(TourRatingService tourRatingService, RatingAssembler ratingAssembler) {
+    public RatingController(TourRatingService tourRatingService, RatingAssembler assembler) {
         this.tourRatingService = tourRatingService;
-        this.assembler = ratingAssembler;
+        this.assembler = assembler;
     }
 
     @GetMapping
     public List<RatingDto> getAll() {
+        LOGGER.info("GET /ratings");
         return assembler.toResources(tourRatingService.lookupAll());
     }
 
     @GetMapping("/{id}")
     public RatingDto getRating(@PathVariable("id") Integer id) {
-        return assembler.toResource(tourRatingService.lookupRatingsById(id).orElseThrow(
-                () -> new NoSuchElementException("Rating " + id + " not found."))
+        LOGGER.info("GET /ratings/{id}", id);
+        return assembler.toResource(tourRatingService.lookupRatingById(id)
+                .orElseThrow(() -> new NoSuchElementException("Rating " + id + " not found"))
         );
     }
 
+
+    /**
+     * Exception handler if NoSuchElementException is thrown in this Controller
+     *
+     * @param ex exception
+     * @return Error message String.
+     */
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoSuchElementException.class)
+    public String return400(NoSuchElementException ex) {
+        LOGGER.error("Unable to complete transaction", ex);
+        return ex.getMessage();
+    }
 }

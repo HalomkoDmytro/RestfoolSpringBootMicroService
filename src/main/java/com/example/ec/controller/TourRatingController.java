@@ -3,6 +3,8 @@ package com.example.ec.controller;
 import com.example.ec.domain.TourRating;
 import com.example.ec.service.TourRatingService;
 import com.example.ec.web.RatingAssembler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,11 +24,15 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path = "/tours/{tourId}/ratings")
 public class TourRatingController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TourRatingController.class);
     private TourRatingService tourRatingService;
     private RatingAssembler assembler;
 
+
     @Autowired
-    public TourRatingController(TourRatingService tourRatingService, RatingAssembler assembler) {
+    public TourRatingController(TourRatingService tourRatingService,
+                                RatingAssembler assembler) {
         this.tourRatingService = tourRatingService;
         this.assembler = assembler;
     }
@@ -44,6 +50,7 @@ public class TourRatingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createTourRating(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated RatingDto ratingDto) {
+        LOGGER.info("POST /tours/{}/ratings", tourId);
         tourRatingService.createNew(tourId, ratingDto.getCustomerId(), ratingDto.getScore(), ratingDto.getComment());
     }
 
@@ -59,6 +66,7 @@ public class TourRatingController {
     public void createManyTourRatings(@PathVariable(value = "tourId") int tourId,
                                       @PathVariable(value = "score") int score,
                                       @RequestParam("customers") Integer customers[]) {
+        LOGGER.info("POST /tours/{}/ratings/{}", tourId, score);
         tourRatingService.rateMany(tourId, score, customers);
     }
 
@@ -67,11 +75,13 @@ public class TourRatingController {
      *
      * @param tourId
      * @param pageable
-     * @return
+     * @param pagedAssembler
+     * @return HATEOAS enabled page of ratings.
      */
     @GetMapping
     public PagedResources<RatingDto> getAllRatingsForTour(@PathVariable(value = "tourId") int tourId, Pageable pageable,
                                                           PagedResourcesAssembler pagedAssembler) {
+        LOGGER.info("GET /tours/{}/ratings", tourId);
         Page<TourRating> tourRatingPage = tourRatingService.lookupRatings(tourId, pageable);
         return pagedAssembler.toResource(tourRatingPage, assembler);
     }
@@ -84,6 +94,7 @@ public class TourRatingController {
      */
     @GetMapping("/average")
     public AbstractMap.SimpleEntry<String, Double> getAverage(@PathVariable(value = "tourId") int tourId) {
+        LOGGER.info("GET /tours/{}/ratings/average", tourId);
         return new AbstractMap.SimpleEntry<String, Double>("average", tourRatingService.getAverageScore(tourId));
     }
 
@@ -96,6 +107,7 @@ public class TourRatingController {
      */
     @PutMapping
     public RatingDto updateWithPut(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated RatingDto ratingDto) {
+        LOGGER.info("PUT /tours/{}/ratings", tourId);
         return toDto(tourRatingService.update(tourId, ratingDto.getCustomerId(),
                 ratingDto.getScore(), ratingDto.getComment()));
     }
@@ -108,6 +120,7 @@ public class TourRatingController {
      */
     @PatchMapping
     public RatingDto updateWithPatch(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated RatingDto ratingDto) {
+        LOGGER.info("PATCH /tours/{}/ratings", tourId);
         return toDto(tourRatingService.updateSome(tourId, ratingDto.getCustomerId(),
                 ratingDto.getScore(), ratingDto.getComment()));
     }
@@ -120,6 +133,7 @@ public class TourRatingController {
      */
     @DeleteMapping("/{customerId}")
     public void delete(@PathVariable(value = "tourId") int tourId, @PathVariable(value = "customerId") int customerId) {
+        LOGGER.info("DELETE /tours/{}/ratings/{}", tourId, customerId);
         tourRatingService.delete(tourId, customerId);
     }
 
@@ -130,7 +144,7 @@ public class TourRatingController {
      * @return RatingDto
      */
     private RatingDto toDto(TourRating tourRating) {
-        return new RatingDto(tourRating.getScore(), tourRating.getComment(), tourRating.getCustomerId());
+        return assembler.toResource(tourRating);
     }
 
     /**
@@ -141,10 +155,10 @@ public class TourRatingController {
      */
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NoSuchElementException.class)
-    public String return400(NoSuchElementException ex) {
+    public String return404(NoSuchElementException ex) {
+        LOGGER.error("Unable to complete transaction", ex);
         return ex.getMessage();
 
     }
-
 
 }
