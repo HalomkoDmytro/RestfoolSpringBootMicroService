@@ -33,7 +33,7 @@ public class RatingDto extends ResourceSupport {
         this.customerId = customerId;
     }
 
-    protected RatingDto() {}
+    public RatingDto() {}
 
     public Integer getScore() {
         return score;
