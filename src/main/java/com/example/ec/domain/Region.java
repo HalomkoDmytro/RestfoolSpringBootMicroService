@@ -2,9 +2,9 @@ package com.example.ec.domain;
 
 public enum Region {
     Central_Coast("Central Coast"),
-    Southern_California("Southen California"),
+    Southern_California("Southern California"),
     Northern_California("Northern California"),
-    Varies("Vaires");
+    Varies("Varies");
 
     private String label;
 
