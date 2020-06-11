@@ -19,6 +19,16 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 
+//	documenting:
+//	http://localhost:8080/swagger-ui.html#/
+	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+//	http://localhost:8080/browser/index.html#/
+	implementation group: 'org.springframework.data', name: 'spring-data-rest-hal-browser', version: '3.3.0.RELEASE'
+
+
+
+
 	testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0')
 	testCompile('org.junit.jupiter:junit-jupiter-params:5.2.0')
 	testRuntime('org.junit.jupiter:junit-jupiter-engine:5.2.0')
