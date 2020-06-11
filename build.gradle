@@ -19,6 +19,8 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
 //	documenting:
 //	http://localhost:8080/swagger-ui.html#/
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
