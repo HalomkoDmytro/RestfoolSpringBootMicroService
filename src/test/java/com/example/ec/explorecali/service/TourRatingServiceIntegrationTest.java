@@ -1,17 +1,16 @@
 package com.example.ec.explorecali.service;
 
+import com.example.ec.ExplorecaliApplication;
 import com.example.ec.domain.TourRating;
 import com.example.ec.service.TourRatingService;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -19,10 +18,12 @@ import java.util.NoSuchElementException;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 //@RunWith(SpringRunner.class)
+
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = RANDOM_PORT)
 @Transactional
 public class TourRatingServiceIntegrationTest {
     private static final int CUSTOMER_ID = 456;
@@ -124,7 +125,7 @@ public class TourRatingServiceIntegrationTest {
     //Happy Path get average score of a Tour.
     @Test
     public void getAverageScore() {
-        assertTrue(service.getAverageScore(TOUR_ID).equals(5.0));
+        assertTrue(service.getAverageScore(TOUR_ID) == 4.0);
     }
 
     //UnHappy Path, Tour NOT_A_TOUR_ID does not exist
