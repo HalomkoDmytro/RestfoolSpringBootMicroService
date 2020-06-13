@@ -1,59 +1,70 @@
 DROP TABLE IF EXISTS security_role;
 DROP TABLE IF EXISTS security_user;
 DROP TABLE IF EXISTS user_role;
-DROP TABLE IF EXISTS TOUR_PACKAGE;
-DROP TABLE IF EXISTS TOUR;
-DROP TABLE IF EXISTS TOUR_RATING;
+DROP TABLE IF EXISTS tour_package;
+DROP TABLE IF EXISTS tour;
+DROP TABLE IF EXISTS tour_rating;
 
-CREATE TABLE IF NOT EXISTS security_role (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  description varchar(100) DEFAULT NULL,
-  role_name varchar(100) DEFAULT NULL
+CREATE TABLE security_role
+(
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    description varchar(100) DEFAULT NULL,
+    role_name   varchar(100) DEFAULT NULL
 );
 
 
-CREATE TABLE IF NOT EXISTS security_user (
-  id BIGINT AUTO_INCREMENT PRIMARY KEY,
-  username varchar(255) NOT NULL,
-  password varchar(255) NOT NULL,
-  first_name varchar(255) NOT NULL,
-  last_name varchar(255) NOT NULL
+CREATE TABLE security_user
+(
+    id         BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username   varchar(255) NOT NULL,
+    password   varchar(255) NOT NULL,
+    first_name varchar(255) NOT NULL,
+    last_name  varchar(255) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS user_role (
-  user_id BIGINT NOT NULL,
-  role_id BIGINT NOT NULL,
-  CONSTRAINT FK_SECURITY_USER_ID FOREIGN KEY (user_id) REFERENCES security_user (id),
-  CONSTRAINT FK_SECURITY_ROLE_ID FOREIGN KEY (role_id) REFERENCES security_role (id)
+
+CREATE TABLE user_role
+(
+    user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+    CONSTRAINT FK_SECURITY_USER_ID FOREIGN KEY (user_id) REFERENCES security_user (id),
+    CONSTRAINT FK_SECURITY_ROLE_ID FOREIGN KEY (role_id) REFERENCES security_role (id)
 );
 
-CREATE TABLE IF NOT EXISTS TOUR_PACKAGE(
-  CODE CHAR(2) NOT NULL UNIQUE,
-  NAME VARCHAR(50) NOT NULL
+CREATE TABLE tour_package
+(
+    code CHAR(2)     NOT NULL UNIQUE,
+    name VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS TOUR (
-id BIGINT AUTO_INCREMENT PRIMARY KEY,
-tour_package_code CHAR(2) NOT NULL,
-title VARCHAR(100) NOT NULL,
-description VARCHAR(2000) NOT NULL,
-blurb VARCHAR(2000) NOT NULL,
-bullets VARCHAR(2000) NOT NULL,
-price VARCHAR(10) not null,
-duration VARCHAR(32) NOT NULL,
-difficulty VARCHAR(16) NOT NULL,
-region VARCHAR(20) NOT NULL,
-keywords VARCHAR(100)
+CREATE TABLE tour
+(
+    id                BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tour_package_code CHAR(2)       NOT NULL,
+    title             VARCHAR(100)  NOT NULL,
+    description       VARCHAR(2000) NOT NULL,
+    blurb             VARCHAR(2000) NOT NULL,
+    bullets           VARCHAR(2000) NOT NULL,
+    price             VARCHAR(10)   not null,
+    duration          VARCHAR(32)   NOT NULL,
+    difficulty        VARCHAR(16)   NOT NULL,
+    region            VARCHAR(20)   NOT NULL,
+    keywords          VARCHAR(100)
 );
-ALTER TABLE TOUR ADD FOREIGN KEY (tour_package_code) REFERENCES tour_package(code);
+ALTER TABLE tour
+    ADD FOREIGN KEY (tour_package_code) REFERENCES tour_package (code);
 
 
-CREATE TABLE IF NOT EXISTS TOUR_RATING (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    tour_id BIGINT,
+CREATE TABLE tour_rating
+(
+    id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    tour_id     BIGINT,
     customer_id BIGINT,
-    score INT,
-    comment VARCHAR(100));
+    score       INT,
+    comment     VARCHAR(100)
+);
 
-ALTER TABLE TOUR_RATING ADD FOREIGN KEY (tour_id) REFERENCES tour(id);
-ALTER TABLE TOUR_RATING ADD UNIQUE MyConstraint (tour_id, customer_id);
+ALTER TABLE tour_rating
+    ADD FOREIGN KEY (tour_id) REFERENCES tour (id);
+ALTER TABLE tour_rating
+    ADD UNIQUE MyConstraint (tour_id, customer_id);
