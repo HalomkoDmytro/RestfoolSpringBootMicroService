@@ -19,7 +19,8 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	implementation 'javax.validation:validation-api:2.0.1.Final'
 	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.18'
-//	compile group: 'org.flywaydb', name: 'flyway-core', version: '6.4.4'
+//	db migration
+	compile group: 'org.flywaydb', name: 'flyway-core'
 
 
 	implementation 'org.springframework.boot:spring-boot-starter-security'
